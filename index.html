@@ -3,11 +3,35 @@
   <head>
     <meta charset="utf-8">
     <title>Tetris by Michael Boan</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src='./bundle.js'></script>
+    <style>
+      #hook {
+        width: 200px;
+        height: 400px;
+        border: 1px solid black;
+      }
+
+      .tile {
+        width: 20px;
+        height: 20px;
+        float: left;
+      }
+
+      .block {
+        width: 18px;
+        height: 18px;
+        border: 1px solid black;
+      }
+    </style>
   </head>
   <body>
-    <canvas id='canvas'>
+    <h1>Futile Tetris</h1>
+    <div id='hook'>
       This should never happen.
-    </canvas>
+    </div>
+    <!-- <canvas id='canvas'>
+      This should never happen.
+    </canvas> -->
   </body>
 </html>

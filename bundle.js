@@ -63,20 +63,27 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Tetris = function () {
-	  function Tetris() {
+	  function Tetris($hook) {
 	    _classCallCheck(this, Tetris);
 	
-	    this.board = new _board2.default();
-	    this.currentTetromino = {
-	      row: 0,
-	      col: 4,
-	      tetromino: this.randomTetromino(),
-	      rotation: 0
-	    };
-	    this.nextTetromino = this.randomTetromino();
+	    this.$hook = $hook; // root div in index.html
+	    this.board = new _board2.default($hook);
+	    this.resetCurrentTetromino();
+	    document.addEventListener('keydown', this.handleKeypress.bind(this), false);
 	  }
 	
 	  _createClass(Tetris, [{
+	    key: 'resetCurrentTetromino',
+	    value: function resetCurrentTetromino() {
+	      this.currentTetromino = {
+	        row: 0,
+	        col: 4,
+	        tetromino: this.nextTetromino || this.randomTetromino(),
+	        rotation: 0
+	      };
+	      this.nextTetromino = this.randomTetromino();
+	    }
+	  }, {
 	    key: 'randomTetromino',
 	    value: function randomTetromino() {
 	      var tetrominos = [Tetrominos.o, Tetrominos.i, Tetrominos.j, Tetrominos.l, Tetrominos.z, Tetrominos.s, Tetrominos.t];
@@ -130,15 +137,56 @@
 	      return moved;
 	    }
 	  }, {
+	    key: 'clearRows',
+	    value: function clearRows() {
+	      for (var row = 0; row < this.board.gridHeight; row++) {
+	        var complete = true;
+	        for (var col = 0; col < this.board.gridWidth; col++) {
+	          if (!this.board.blockAt(row, col)) {
+	            complete = false;
+	            break;
+	          }
+	        }
+	        if (complete) {
+	          this.board.removeRow(row);
+	          row--;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'handleKeypress',
+	    value: function handleKeypress(e) {
+	      switch (e.keyCode) {
+	        case 38:
+	          this.rotateCurrentTetromino();
+	          break;
+	        case 37:
+	          this.move(0, -1);
+	          break;
+	        case 39:
+	          this.move(0, 1);
+	          break;
+	        case 40:
+	          this.move(1, 0);
+	          break;
+	      }
+	      this.board.render();
+	    }
+	  }, {
 	    key: 'play',
 	    value: function play() {
 	      setTimeout(function () {
-	        this.move(1, 0);
-	        this.rotateCurrentTetromino();
+	        if (!this.move(1, 0)) {
+	          if (this.currentTetromino.row === 0) {
+	            alert('you lose!');
+	            return;
+	          }
+	          this.clearRows();
+	          this.resetCurrentTetromino();
+	        }
 	        this.play();
 	      }.bind(this), 500);
-	      this.board.printGridToConsole();
-	      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+	      this.board.render();
 	    }
 	  }]);
 	
@@ -146,7 +194,7 @@
 	}();
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  var tetris = new Tetris();
+	  var tetris = new Tetris($('#hook'));
 	  tetris.play();
 	});
 
@@ -165,9 +213,10 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Board = function () {
-	  function Board() {
+	  function Board($hook) {
 	    _classCallCheck(this, Board);
 	
+	    this.$hook = $hook; // root div in index.html
 	    this.gridHeight = 20;
 	    this.gridWidth = 10;
 	    this.grid = this.initializeGrid();
@@ -265,6 +314,12 @@
 	      return occupied;
 	    }
 	  }, {
+	    key: "removeRow",
+	    value: function removeRow(row) {
+	      this.grid.splice(row, 1);
+	      this.grid.unshift(new Array(this.gridWidth));
+	    }
+	  }, {
 	    key: "printGridToConsole",
 	    value: function printGridToConsole() {
 	      for (var row = 0; row < this.gridHeight; row++) {
@@ -275,6 +330,27 @@
 	        }
 	        console.log(rowString);
 	      }
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      this.$hook.html("");
+	      for (var row = 0; row < this.gridHeight; row++) {
+	        for (var col = 0; col < this.gridWidth; col++) {
+	          var $tile = $("<div id=r-" + row + "-c-" + col + "></div>");
+	          $tile.addClass('tile');
+	          var color = 'rgb(255, 255, 255)';
+	          if (this.blockAt(row, col)) {
+	            color = this.blockAt(row, col).color;
+	            $tile.addClass('block');
+	          }
+	          $tile.css('background-color', color);
+	          this.$hook.append($tile);
+	        }
+	      }
+	      var $nextPiece = $("<div class='next-piece'><div>");
+	
+	      this.$hook.append($nextPiece);
 	    }
 	  }]);
 	
@@ -312,37 +388,44 @@
 	// access n-th rotation of piece with o.rotations[n]
 	var o = exports.o = {
 	  rotations: [52224, 52224, 52224, 52224],
-	  string: 'O'
+	  string: 'O',
+	  color: 'rgb(255, 255, 0)'
 	};
 	
 	var i = exports.i = {
 	  rotations: [17476, 3840, 8738, 240],
-	  string: 'I'
+	  string: 'I',
+	  color: 'rgb(0, 231, 233)'
 	};
 	
 	var t = exports.t = {
 	  rotations: [3648, 19520, 19968, 17984],
-	  string: 'T'
+	  string: 'T',
+	  color: 'rgb(255, 0, 255)'
 	};
 	
 	var l = exports.l = {
 	  rotations: [17504, 3712, 50240, 11776],
-	  string: 'L'
+	  string: 'L',
+	  color: 'rgb(255, 128, 0)'
 	};
 	
 	var j = exports.j = {
 	  rotations: [17600, 36352, 25664, 3616],
-	  string: 'J'
+	  string: 'J',
+	  color: 'rgb(0, 0, 255)'
 	};
 	
 	var s = exports.s = {
 	  rotations: [27648, 17952, 1728, 35904],
-	  string: 'S'
+	  string: 'S',
+	  color: 'rgb(0, 255, 0)'
 	};
 	
 	var z = exports.z = {
 	  rotations: [50688, 9792, 3168, 19584],
-	  string: 'Z'
+	  string: 'Z',
+	  color: 'rgb(255, 0, 0)'
 	};
 
 /***/ }
