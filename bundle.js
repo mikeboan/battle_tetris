@@ -187,7 +187,8 @@
 	    UP: 87,
 	    LEFT: 65,
 	    RIGHT: 68,
-	    DOWN: 83
+	    DOWN: 83,
+	    DROP: 81
 	  });
 	  leftGame.addOpponent(rightGame);
 	  rightGame.addOpponent(leftGame);
@@ -235,7 +236,7 @@
 	      LEFT: 37,
 	      RIGHT: 39,
 	      DOWN: 40,
-	      DROP: 32
+	      DROP: 191
 	    };
 	    document.addEventListener('keydown', this.handleKeypress.bind(this), false);
 	  }
@@ -387,6 +388,7 @@
 	  }, {
 	    key: 'handleKeypress',
 	    value: function handleKeypress(e) {
+	      console.log(e.keyCode);
 	      switch (e.keyCode) {
 	        case this.keyBindings.UP:
 	          this.rotateCurrentTetromino();
