@@ -48,11 +48,170 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _board = __webpack_require__(1);
+	var _tetris = __webpack_require__(1);
+	
+	var _tetris2 = _interopRequireDefault(_tetris);
+	
+	var _tetrominos = __webpack_require__(3);
+	
+	var Tetrominos = _interopRequireWildcard(_tetrominos);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BattleTetris = function (_Tetris) {
+	  _inherits(BattleTetris, _Tetris);
+	
+	  function BattleTetris($hook, keyBindings) {
+	    _classCallCheck(this, BattleTetris);
+	
+	    var _this = _possibleConstructorReturn(this, (BattleTetris.__proto__ || Object.getPrototypeOf(BattleTetris)).call(this, $hook, keyBindings));
+	
+	    _this.bricks = [];
+	    _this.dropBlocksOnOpponent = null;
+	    return _this;
+	  }
+	
+	  /**
+	   *  Hold pointer to opponent BattleTetris instance
+	   */
+	
+	
+	  _createClass(BattleTetris, [{
+	    key: 'addOpponent',
+	    value: function addOpponent(opponent) {
+	      this.opponent = opponent;
+	      this.registerListener(this.opponent.initializeBricks.bind(opponent));
+	    }
+	
+	    /**
+	     * accept callback from opponent (Observer design pattern)
+	     */
+	
+	  }, {
+	    key: 'registerListener',
+	    value: function registerListener(cb) {
+	      this.dropBlocksOnOpponent = cb;
+	    }
+	
+	    /**
+	     * call callback on opponent to drop blocks on their board
+	     */
+	
+	  }, {
+	    key: 'notifyListener',
+	    value: function notifyListener(numBricks) {
+	      this.dropBlocksOnOpponent(numBricks);
+	    }
+	
+	    /**
+	     * Add numBricks bricks to this.bricks array
+	     */
+	
+	  }, {
+	    key: 'initializeBricks',
+	    value: function initializeBricks(numBricks) {
+	      var brickLocation = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+	      for (var i = 0; i < numBricks; i++) {
+	        var randIdx = Math.floor(Math.random() * (brickLocation.length + 1));
+	        this.bricks.push({
+	          row: 0,
+	          col: brickLocation[randIdx],
+	          tetromino: Tetrominos.brick,
+	          rotation: 0
+	        });
+	        brickLocation.splice(randIdx, 1);
+	      }
+	    }
+	
+	    /**
+	     * Drop all unclearable bricks one tile if possible
+	     */
+	
+	  }, {
+	    key: 'dropBricks',
+	    value: function dropBricks() {
+	      var movedBricks = [];
+	      for (var i = 0; i < this.bricks.length; i++) {
+	        var brick = this.bricks[i];
+	        if (this.move(1, 0, brick)) {
+	          // release bricks that have fallen as far as possible
+	          movedBricks.push(brick);
+	        }
+	      }
+	      this.bricks = movedBricks;
+	    }
+	
+	    /**
+	     * Main gameplay loop - overwrite play() in Parent Class to accommodate
+	     * brick functionality
+	     */
+	
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      setTimeout(function () {
+	        this.dropBricks();
+	        if (!this.move(1, 0)) {
+	          if (this.currentTetromino.row === 0) {
+	            alert('you lose!');
+	            return;
+	          }
+	          var clearedRows = this.clearRows();
+	          // drop bricks on opponent if rows cleared
+	          if (clearedRows) {
+	            this.notifyListener(clearedRows);
+	            // this.initializeBricks(clearedRows);
+	          }
+	          this.resetCurrentTetromino();
+	        }
+	        this.play();
+	      }.bind(this), this.dropInterval);
+	      this.board.render();
+	    }
+	  }]);
+	
+	  return BattleTetris;
+	}(_tetris2.default);
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var rightGame = new BattleTetris($('#right-board'));
+	  var leftGame = new BattleTetris($('#left-board'), {
+	    UP: 87,
+	    LEFT: 65,
+	    RIGHT: 68,
+	    DOWN: 83
+	  });
+	  leftGame.addOpponent(rightGame);
+	  rightGame.addOpponent(leftGame);
+	  rightGame.play();
+	  leftGame.play();
+	});
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _board = __webpack_require__(2);
 	
 	var _board2 = _interopRequireDefault(_board);
 	
-	var _tetrominos = __webpack_require__(2);
+	var _tetrominos = __webpack_require__(3);
 	
 	var Tetrominos = _interopRequireWildcard(_tetrominos);
 	
@@ -63,12 +222,21 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Tetris = function () {
-	  function Tetris($hook) {
+	  function Tetris($hook, keyBindings) {
 	    _classCallCheck(this, Tetris);
 	
 	    this.$hook = $hook; // root div in index.html
 	    this.board = new _board2.default($hook);
+	    this.dropInterval = 500; //milliseconds
+	    this.clearedLines = 0;
 	    this.resetCurrentTetromino();
+	    this.keyBindings = keyBindings || {
+	      UP: 38,
+	      LEFT: 37,
+	      RIGHT: 39,
+	      DOWN: 40,
+	      DROP: 32
+	    };
 	    document.addEventListener('keydown', this.handleKeypress.bind(this), false);
 	  }
 	
@@ -90,88 +258,159 @@
 	      return tetrominos[Math.floor(Math.random() * tetrominos.length)];
 	    }
 	  }, {
+	    key: 'removeTetromino',
+	    value: function removeTetromino(tetromino) {
+	      this.board.eachBlock(tetromino.row, tetromino.col, tetromino.tetromino, tetromino.rotation, function (x, y) {
+	        this.board.setBlock(x, y, undefined);
+	      }.bind(this));
+	    }
+	  }, {
 	    key: 'removeCurrentTetromino',
 	    value: function removeCurrentTetromino() {
-	      this.board.eachBlock(this.currentTetromino.row, this.currentTetromino.col, this.currentTetromino.tetromino, this.currentTetromino.rotation, function (x, y) {
-	        this.board.setBlock(x, y, undefined);
+	      this.removeTetromino(this.currentTetromino);
+	    }
+	    //
+	    // removeCurrentTetromino() {
+	    //   this.board.eachBlock(
+	    //     this.currentTetromino.row,
+	    //     this.currentTetromino.col,
+	    //     this.currentTetromino.tetromino,
+	    //     this.currentTetromino.rotation,
+	    //     function (x, y) {
+	    //       this.board.setBlock(x, y, undefined);
+	    //     }.bind(this)
+	    //   );
+	    // }
+	    //
+	    // placeCurrentTetromino() {
+	    //   this.board.eachBlock(
+	    //     this.currentTetromino.row,
+	    //     this.currentTetromino.col,
+	    //     this.currentTetromino.tetromino,
+	    //     this.currentTetromino.rotation,
+	    //     function (x, y) {
+	    //       this.board.setBlock(x, y, this.currentTetromino.tetromino);
+	    //     }.bind(this)
+	    //   );
+	    // }
+	
+	  }, {
+	    key: 'placeTetromino',
+	    value: function placeTetromino(tetromino) {
+	      this.board.eachBlock(tetromino.row, tetromino.col, tetromino.tetromino, tetromino.rotation, function (x, y) {
+	        this.board.setBlock(x, y, tetromino.tetromino);
 	      }.bind(this));
 	    }
 	  }, {
 	    key: 'placeCurrentTetromino',
 	    value: function placeCurrentTetromino() {
-	      this.board.eachBlock(this.currentTetromino.row, this.currentTetromino.col, this.currentTetromino.tetromino, this.currentTetromino.rotation, function (x, y) {
-	        this.board.setBlock(x, y, this.currentTetromino.tetromino);
-	      }.bind(this));
+	      this.placeTetromino(this.currentTetromino);
+	    }
+	  }, {
+	    key: 'rotateTetromino',
+	    value: function rotateTetromino(tetromino) {
+	      this.removeTetromino(tetromino);
+	      if (!this.board.isOccupied(tetromino.row, tetromino.col, tetromino.tetromino, (tetromino.rotation + 1) % 4)) {
+	        tetromino.rotation = (tetromino.rotation + 1) % 4;
+	      }
+	
+	      this.placeTetromino(tetromino);
 	    }
 	  }, {
 	    key: 'rotateCurrentTetromino',
 	    value: function rotateCurrentTetromino() {
-	      this.removeCurrentTetromino();
-	      if (!this.board.isOccupied(this.currentTetromino.row, this.currentTetromino.col, this.currentTetromino.tetromino, (this.currentTetromino.rotation + 1) % 4)) {
-	        this.currentTetromino.rotation = (this.currentTetromino.rotation + 1) % 4;
-	      }
-	
-	      this.placeCurrentTetromino();
+	      this.rotateTetromino(this.currentTetromino);
 	    }
-	
-	    /**
-	     * move current tetromino by dRow, dCol if space is available for it to move
-	     * return true if moved, false o.w.
-	     */
-	
 	  }, {
 	    key: 'move',
-	    value: function move(dRow, dCol) {
-	      var newRow = this.currentTetromino.row + dRow;
-	      var newCol = this.currentTetromino.col + dCol;
-	      this.removeCurrentTetromino();
+	    value: function move(dRow, dCol, tetromino) {
+	      if (!tetromino) tetromino = this.currentTetromino;
+	
+	      var newRow = tetromino.row + dRow;
+	      var newCol = tetromino.col + dCol;
+	      this.removeTetromino(tetromino);
 	      var moved = false;
 	
-	      if (!this.board.isOccupied(newRow, newCol, this.currentTetromino.tetromino, this.currentTetromino.rotation)) {
-	        this.currentTetromino.row = newRow;
-	        this.currentTetromino.col = newCol;
+	      if (!this.board.isOccupied(newRow, newCol, tetromino.tetromino, tetromino.rotation)) {
+	        tetromino.row = newRow;
+	        tetromino.col = newCol;
 	        moved = true;
 	      }
 	
-	      this.placeCurrentTetromino();
+	      this.placeTetromino(tetromino);
 	      return moved;
 	    }
+	
+	    /**
+	     * Drop current piece as far as possible
+	     */
+	
+	  }, {
+	    key: 'drop',
+	    value: function drop() {
+	      while (this.move(1, 0)) {
+	        continue;
+	      }
+	    }
+	
+	    /**
+	     * Remove completed rows from board, and update dropinterval as necessary
+	     * Return number of rows cleared
+	     */
+	
 	  }, {
 	    key: 'clearRows',
 	    value: function clearRows() {
+	      var removedRows = 0;
 	      for (var row = 0; row < this.board.gridHeight; row++) {
 	        var complete = true;
 	        for (var col = 0; col < this.board.gridWidth; col++) {
-	          if (!this.board.blockAt(row, col)) {
-	            complete = false;
-	            break;
-	          }
+	          if (!this.board.blockAt(row, col) || this.board.blockAt(row, col).string === '#' // brick piece
+	          ) {
+	              complete = false;
+	              break;
+	            }
 	        }
 	        if (complete) {
 	          this.board.removeRow(row);
+	          removedRows++;
 	          row--;
 	        }
 	      }
+	      return removedRows;
 	    }
+	
+	    /**
+	     * Handle user input according to given keyBindings
+	     */
+	
 	  }, {
 	    key: 'handleKeypress',
 	    value: function handleKeypress(e) {
 	      switch (e.keyCode) {
-	        case 38:
+	        case this.keyBindings.UP:
 	          this.rotateCurrentTetromino();
 	          break;
-	        case 37:
+	        case this.keyBindings.LEFT:
 	          this.move(0, -1);
 	          break;
-	        case 39:
+	        case this.keyBindings.RIGHT:
 	          this.move(0, 1);
 	          break;
-	        case 40:
+	        case this.keyBindings.DOWN:
 	          this.move(1, 0);
+	          break;
+	        case this.keyBindings.DROP:
+	          this.drop();
 	          break;
 	      }
 	      this.board.render();
 	    }
+	
+	    /**
+	     * Main gameplay loop
+	     */
+	
 	  }, {
 	    key: 'play',
 	    value: function play() {
@@ -185,7 +424,7 @@
 	          this.resetCurrentTetromino();
 	        }
 	        this.play();
-	      }.bind(this), 500);
+	      }.bind(this), this.dropInterval);
 	      this.board.render();
 	    }
 	  }]);
@@ -193,13 +432,10 @@
 	  return Tetris;
 	}();
 	
-	document.addEventListener("DOMContentLoaded", function () {
-	  var tetris = new Tetris($('#hook'));
-	  tetris.play();
-	});
+	exports.default = Tetris;
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -236,6 +472,11 @@
 	      }
 	      return grid;
 	    }
+	
+	    /**
+	     * return the tetromino object at row, col (undefined if no tetromino)
+	     */
+	
 	  }, {
 	    key: "blockAt",
 	    value: function blockAt(row, col) {
@@ -284,14 +525,13 @@
 	        }
 	      }
 	    }
-	
-	    /**
-	     * Place tetromino at row, col
-	     */
-	
-	  }, {
-	    key: "placeTetromino",
-	    value: function placeTetromino(tetromino, row, col) {}
+	    //
+	    // /**
+	    //  * Place tetromino at row, col
+	    //  */
+	    // placeTetromino(tetromino, row, col) {
+	    //
+	    // }
 	
 	    /**
 	     *  Return true if any block tetromino of given rotation located at (row, col)
@@ -313,12 +553,22 @@
 	
 	      return occupied;
 	    }
+	
+	    /**
+	     * Delete row from grid, adding empty row to top of grid
+	     */
+	
 	  }, {
 	    key: "removeRow",
 	    value: function removeRow(row) {
 	      this.grid.splice(row, 1);
 	      this.grid.unshift(new Array(this.gridWidth));
 	    }
+	
+	    /**
+	     * Display this.grid in console for debugging purposes
+	     */
+	
 	  }, {
 	    key: "printGridToConsole",
 	    value: function printGridToConsole() {
@@ -331,6 +581,11 @@
 	        console.log(rowString);
 	      }
 	    }
+	
+	    /**
+	     * Update DOM to reflect current board state
+	     */
+	
 	  }, {
 	    key: "render",
 	    value: function render() {
@@ -348,9 +603,6 @@
 	          this.$hook.append($tile);
 	        }
 	      }
-	      var $nextPiece = $("<div class='next-piece'><div>");
-	
-	      this.$hook.append($nextPiece);
 	    }
 	  }]);
 	
@@ -360,7 +612,7 @@
 	exports.default = Board;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -426,6 +678,13 @@
 	  rotations: [50688, 9792, 3168, 19584],
 	  string: 'Z',
 	  color: 'rgb(255, 0, 0)'
+	};
+	
+	// for battle tetris - the unclearable brick
+	var brick = exports.brick = {
+	  rotations: [32768, 32768, 32768, 32768],
+	  string: '#',
+	  color: 'gray'
 	};
 
 /***/ }

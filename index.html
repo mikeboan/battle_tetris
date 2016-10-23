@@ -6,10 +6,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src='./bundle.js'></script>
     <style>
-      #hook {
+      .board {
         width: 200px;
         height: 400px;
         border: 1px solid black;
+        float: left;
+        margin: 50px;
       }
 
       .tile {
@@ -27,7 +29,10 @@
   </head>
   <body>
     <h1>Futile Tetris</h1>
-    <div id='hook'>
+    <div id='left-board' class='board'>
+      This should never happen.
+    </div>
+    <div id='right-board' class='board'>
       This should never happen.
     </div>
     <!-- <canvas id='canvas'>
