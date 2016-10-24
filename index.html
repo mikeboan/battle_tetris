@@ -3,39 +3,22 @@
   <head>
     <meta charset="utf-8">
     <title>Tetris by Michael Boan</title>
+    <link rel="stylesheet" href="style.css" charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src='./bundle.js'></script>
-    <style>
-      section {
-        float: left;
-      }
-
-      .board {
-        width: 200px;
-        height: 400px;
-        border: 1px solid black;
-        margin: 50px;
-      }
-
-      .tile {
-        width: 20px;
-        height: 20px;
-        float: left;
-      }
-
-      .block {
-        width: 18px;
-        height: 18px;
-        border: 1px solid black;
-      }
-    </style>
   </head>
   <body>
-    <h1>Battle Tetris</h1>
-    <section>
+
+    <header>
+      <h1>Battle!</h1>
+      <img src='./lib/images/Tetris-logo.png'></img>
+    </header>
+
+    <section class="player1 group">
+
       <h2>Player 1</h2>
-      <article class="">
-        Controls:
+
+      <article class="controls">
         <table>
           <tr>
             <th>Action</th>
@@ -67,10 +50,10 @@
         This should never happen.
       </div>
     </section>
-    <section>
+
+    <section class='player2 group'>
       <h2>Player 2</h2>
-      <article class="">
-        Controls:
+      <article class="controls">
         <table>
           <tr>
             <th>Action</th>
@@ -78,25 +61,26 @@
           </tr>
           <tr>
             <td>Rotate</td>
-            <td>UP</td>
+            <td>↑</td>
           </tr>
           <tr>
             <td>Move Left</td>
-            <td>LEFT</td>
+            <td>←</td>
           </tr>
           <tr>
             <td>Move Right</td>
-            <td>RIGHT</td>
+            <td>→</td>
           </tr>
           <tr>
             <td>Move Down</td>
-            <td>DOWN</td>
+            <td>↓</td>
           </tr>
           <tr>
             <td>Immediate Drop</td>
             <td>/</td>
           </tr>
         </table>
+      </article>
       <div id='right-board' class='board'>
         This should never happen.
       </div>

@@ -69,11 +69,12 @@
 	var BattleTetris = function (_Tetris) {
 	  _inherits(BattleTetris, _Tetris);
 	
-	  function BattleTetris($hook, keyBindings) {
+	  function BattleTetris(player, $hook, keyBindings) {
 	    _classCallCheck(this, BattleTetris);
 	
 	    var _this = _possibleConstructorReturn(this, (BattleTetris.__proto__ || Object.getPrototypeOf(BattleTetris)).call(this, $hook, keyBindings));
 	
+	    _this.player = player;
 	    _this.bricks = [];
 	    _this.dropBlocksOnOpponent = null;
 	    return _this;
@@ -159,22 +160,22 @@
 	    value: function play() {
 	      setTimeout(function () {
 	        this.dropBricks();
+	
 	        if (!this.move(1, 0)) {
 	          if (this.currentTetromino.row === 0) {
-	            alert('you lose!');
+	            alert(this.player + ' loses!');
 	            return;
 	          }
-	          var clearedRows = this.clearRows();
+	          var newlyClearedRows = this.clearRows();
+	          this.clearedRows += newlyClearedRows;
+	          this.updateDropInterval();
 	          // drop bricks on opponent if rows cleared
-	          if (clearedRows) {
-	            this.notifyListener(clearedRows);
-	            // this.initializeBricks(clearedRows);
-	          }
+	          if (newlyClearedRows) this.notifyListener(newlyClearedRows);
 	          this.resetCurrentTetromino();
 	        }
+	        this.board.render();
 	        this.play();
 	      }.bind(this), this.dropInterval);
-	      this.board.render();
 	    }
 	  }]);
 	
@@ -182,8 +183,8 @@
 	}(_tetris2.default);
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  var rightGame = new BattleTetris($('#right-board'));
-	  var leftGame = new BattleTetris($('#left-board'), {
+	  var rightGame = new BattleTetris("Player 2", $('#right-board'));
+	  var leftGame = new BattleTetris("Player 1", $('#left-board'), {
 	    UP: 87,
 	    LEFT: 65,
 	    RIGHT: 68,
@@ -229,7 +230,7 @@
 	    this.$hook = $hook; // root div in index.html
 	    this.board = new _board2.default($hook);
 	    this.dropInterval = 500; //milliseconds
-	    this.clearedLines = 0;
+	    this.clearedRows = 0;
 	    this.resetCurrentTetromino();
 	    this.keyBindings = keyBindings || {
 	      UP: 38,
@@ -270,31 +271,6 @@
 	    value: function removeCurrentTetromino() {
 	      this.removeTetromino(this.currentTetromino);
 	    }
-	    //
-	    // removeCurrentTetromino() {
-	    //   this.board.eachBlock(
-	    //     this.currentTetromino.row,
-	    //     this.currentTetromino.col,
-	    //     this.currentTetromino.tetromino,
-	    //     this.currentTetromino.rotation,
-	    //     function (x, y) {
-	    //       this.board.setBlock(x, y, undefined);
-	    //     }.bind(this)
-	    //   );
-	    // }
-	    //
-	    // placeCurrentTetromino() {
-	    //   this.board.eachBlock(
-	    //     this.currentTetromino.row,
-	    //     this.currentTetromino.col,
-	    //     this.currentTetromino.tetromino,
-	    //     this.currentTetromino.rotation,
-	    //     function (x, y) {
-	    //       this.board.setBlock(x, y, this.currentTetromino.tetromino);
-	    //     }.bind(this)
-	    //   );
-	    // }
-	
 	  }, {
 	    key: 'placeTetromino',
 	    value: function placeTetromino(tetromino) {
@@ -379,6 +355,13 @@
 	        }
 	      }
 	      return removedRows;
+	    }
+	  }, {
+	    key: 'updateDropInterval',
+	    value: function updateDropInterval() {
+	      if (this.dropInterval > 100) {
+	        this.dropInterval = 500 - 10 * Math.floor(this.clearedRows / 10);
+	      }
 	    }
 	
 	    /**
@@ -596,12 +579,13 @@
 	        for (var col = 0; col < this.gridWidth; col++) {
 	          var $tile = $("<div id=r-" + row + "-c-" + col + "></div>");
 	          $tile.addClass('tile');
-	          var color = 'rgb(255, 255, 255)';
+	          // let color = 'rgb(255, 255, 255)';
 	          if (this.blockAt(row, col)) {
-	            color = this.blockAt(row, col).color;
+	            var color = this.blockAt(row, col).color;
+	            $tile.css('background-color', color);
 	            $tile.addClass('block');
+	            $tile.addClass(this.blockAt(row, col).string);
 	          }
-	          $tile.css('background-color', color);
 	          this.$hook.append($tile);
 	        }
 	      }
@@ -685,7 +669,7 @@
 	// for battle tetris - the unclearable brick
 	var brick = exports.brick = {
 	  rotations: [32768, 32768, 32768, 32768],
-	  string: '#',
+	  string: 'B',
 	  color: 'gray'
 	};
 
