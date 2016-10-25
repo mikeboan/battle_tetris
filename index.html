@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Tetris by Michael Boan</title>
+    <title>Battle Tetris by Michael Boan</title>
     <link rel="stylesheet" href="style.css" charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src='./bundle.js'></script>
@@ -14,79 +14,78 @@
       <img src='./lib/images/Tetris-logo.png'></img>
     </header>
 
-    <section class="player1 group">
+    <section class='boards group'>
+      <section class="player1 group">
 
-      <h2>Player 1</h2>
+        <h2>Player 1</h2>
 
-      <article class="controls">
-        <table>
-          <tr>
-            <th>Action</th>
-            <th>Key</th>
-          </tr>
-          <tr>
-            <td>Rotate</td>
-            <td>W</td>
-          </tr>
-          <tr>
-            <td>Move Left</td>
-            <td>A</td>
-          </tr>
-          <tr>
-            <td>Move Right</td>
-            <td>D</td>
-          </tr>
-          <tr>
-            <td>Move Down</td>
-            <td>S</td>
-          </tr>
-          <tr>
-            <td>Immediate Drop</td>
-            <td>Q</td>
-          </tr>
-        </table>
-      </article>
-      <div id='left-board' class='board'>
-        This should never happen.
-      </div>
+        <article class="controls">
+          <table>
+            <tr>
+              <th>Action</th>
+              <th>Key</th>
+            </tr>
+            <tr>
+              <td>Rotate</td>
+              <td>W</td>
+            </tr>
+            <tr>
+              <td>Move Left</td>
+              <td>A</td>
+            </tr>
+            <tr>
+              <td>Move Right</td>
+              <td>D</td>
+            </tr>
+            <tr>
+              <td>Move Down</td>
+              <td>S</td>
+            </tr>
+            <tr>
+              <td>Immediate Drop</td>
+              <td>Q</td>
+            </tr>
+          </table>
+        </article>
+        <div id='left-board' class='board'>
+          This should never happen.
+        </div>
+      </section>
+
+      <section class='player2 group'>
+        <h2>Player 2</h2>
+        <article class="controls">
+          <table>
+            <tr>
+              <th>Action</th>
+              <th>Key</th>
+            </tr>
+            <tr>
+              <td>Rotate</td>
+              <td>↑</td>
+            </tr>
+            <tr>
+              <td>Move Left</td>
+              <td>←</td>
+            </tr>
+            <tr>
+              <td>Move Right</td>
+              <td>→</td>
+            </tr>
+            <tr>
+              <td>Move Down</td>
+              <td>↓</td>
+            </tr>
+            <tr>
+              <td>Immediate Drop</td>
+              <td>/</td>
+            </tr>
+          </table>
+        </article>
+        <div id='right-board' class='board'>
+          This should never happen.
+        </div>
+      </section>
     </section>
-
-    <section class='player2 group'>
-      <h2>Player 2</h2>
-      <article class="controls">
-        <table>
-          <tr>
-            <th>Action</th>
-            <th>Key</th>
-          </tr>
-          <tr>
-            <td>Rotate</td>
-            <td>↑</td>
-          </tr>
-          <tr>
-            <td>Move Left</td>
-            <td>←</td>
-          </tr>
-          <tr>
-            <td>Move Right</td>
-            <td>→</td>
-          </tr>
-          <tr>
-            <td>Move Down</td>
-            <td>↓</td>
-          </tr>
-          <tr>
-            <td>Immediate Drop</td>
-            <td>/</td>
-          </tr>
-        </table>
-      </article>
-      <div id='right-board' class='board'>
-        This should never happen.
-      </div>
-    </section>
-    <!-- <canvas id='canvas'>
-      This should never happen.
-    </canvas> -->
   </body>
 </html>

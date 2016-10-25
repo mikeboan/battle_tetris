@@ -78,6 +78,10 @@ td:nth-child(even) {
   color: white;
 }
 
+.boards {
+  margin: 0 auto;
+}
+
 .board {
   float: left;
   width: 220px;
@@ -125,3 +129,21 @@ td:nth-child(even) {
 .S { background-image: url('./lib/images/S.png'); }
 .T { background-image: url('./lib/images/t.png'); }
 .B { background-image: url('./lib/images/brick.png'); }
+
+/* modal */
+.modal-overlay {
+  opacity: 0.2;
+  background-color: black;
+  z-index: 999;
+}
+
+.modal-content {
+  position: absolute;
+  top: 400px;
+  left: calc(50% - 100px);
+  z-index: 1000;
+  width: 200px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border: 2px solid rgb(34, 34, 34);
+}
