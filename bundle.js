@@ -93,8 +93,6 @@
 	    key: 'addOpponent',
 	    value: function addOpponent(opponent) {
 	      this.opponent = opponent;
-	      // this.registerListener(this.opponent.initializeBricks.bind(opponent));
-	      this.registerListener(this.opponent.addLines.bind(opponent));
 	    }
 	
 	    /**
@@ -171,6 +169,44 @@
 	      }
 	      this.placeCurrentTetromino();
 	    }
+	  }, {
+	    key: 'pause',
+	    value: function pause() {
+	      this.paused = true;
+	    }
+	  }, {
+	    key: 'playTurn',
+	    value: function playTurn() {
+	      if (!this.move(1, 0)) {
+	        if (this.currentTetromino.row === 0) {
+	          this.lose();
+	        }
+	        var newlyClearedRows = this.clearRows();
+	        this.clearedRows += newlyClearedRows;
+	        this.updateDropInterval();
+	        // drop bricks on opponent if rows cleared
+	        if (newlyClearedRows) this.notifyListener(newlyClearedRows);
+	        this.resetCurrentTetromino();
+	      }
+	    }
+	  }, {
+	    key: 'lose',
+	    value: function lose() {
+	      this.board.render();
+	      this.pause();
+	      this.opponent.pause();
+	      this.renderLossModal();
+	    }
+	  }, {
+	    key: 'renderLossModal',
+	    value: function renderLossModal() {
+	      (0, _modal2.default)({ title: this.player + ' loses!',
+	        content: 'Rematch?',
+	        buttons: [{ text: 'Play Again', event: 'play', keyCodes: [13] }]
+	      }).on('play', function () {
+	        return window.location.reload();
+	      });
+	    }
 	
 	    /**
 	     * Main gameplay loop - overwrite play() in Parent Class to accommodate
@@ -181,28 +217,11 @@
 	    key: 'play',
 	    value: function play() {
 	      setTimeout(function () {
-	        // this.dropBricks();
-	
-	        if (!this.move(1, 0)) {
-	          if (this.currentTetromino.row === 0) {
-	            this.board.render();
-	            (0, _modal2.default)({ title: this.player + ' loses!',
-	              content: 'Rematch?',
-	              buttons: [{ text: 'Play Again', event: 'play', keyCodes: [13] }]
-	            }).on('play', function () {
-	              return window.location.reload();
-	            });
-	            return;
-	          }
-	          var newlyClearedRows = this.clearRows();
-	          this.clearedRows += newlyClearedRows;
-	          this.updateDropInterval();
-	          // drop bricks on opponent if rows cleared
-	          if (newlyClearedRows) this.notifyListener(newlyClearedRows);
-	          this.resetCurrentTetromino();
-	        }
 	        this.board.render();
-	        this.play();
+	        if (!this.paused) {
+	          this.playTurn();
+	          this.play();
+	        }
 	      }.bind(this), this.dropInterval);
 	    }
 	  }]);
@@ -219,8 +238,13 @@
 	    DOWN: 83,
 	    DROP: 81
 	  });
+	
 	  leftGame.addOpponent(rightGame);
 	  rightGame.addOpponent(leftGame);
+	
+	  leftGame.registerListener(leftGame.opponent.addLines.bind(leftGame.opponent));
+	  rightGame.registerListener(rightGame.opponent.addLines.bind(rightGame.opponent));
+	
 	  leftGame.board.render();
 	  rightGame.board.render();
 	
@@ -1115,6 +1139,7 @@
 	    this.dropInterval = 500; //milliseconds
 	    this.clearedRows = 0;
 	    this.resetCurrentTetromino();
+	    this.paused = false;
 	    this.keyBindings = keyBindings || {
 	      UP: 38,
 	      LEFT: 37,
