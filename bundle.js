@@ -185,7 +185,13 @@
 	
 	        if (!this.move(1, 0)) {
 	          if (this.currentTetromino.row === 0) {
-	            alert(this.player + ' loses!');
+	            this.board.render();
+	            (0, _modal2.default)({ title: this.player + ' loses!',
+	              content: 'Rematch?',
+	              buttons: [{ text: 'Play Again', event: 'play', keyCodes: [13] }]
+	            }).on('play', function () {
+	              return window.location.reload();
+	            });
 	            return;
 	          }
 	          var newlyClearedRows = this.clearRows();
@@ -215,6 +221,8 @@
 	  });
 	  leftGame.addOpponent(rightGame);
 	  rightGame.addOpponent(leftGame);
+	  leftGame.board.render();
+	  rightGame.board.render();
 	
 	  var playGames = function playGames() {
 	    rightGame.play();
