@@ -46,19 +46,82 @@
 
 	'use strict';
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _battle_tetris = __webpack_require__(1);
 	
-	var _modal = __webpack_require__(1);
+	var _battle_tetris2 = _interopRequireDefault(_battle_tetris);
+	
+	var _computer_player = __webpack_require__(5);
+	
+	var _computer_player2 = _interopRequireDefault(_computer_player);
+	
+	var _modal = __webpack_require__(6);
 	
 	var _modal2 = _interopRequireDefault(_modal);
 	
-	var _tetris = __webpack_require__(6);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	  var rightGame = new _battle_tetris2.default("Player 2", $('#right-board'));
+	  var leftGame = new _battle_tetris2.default("Player 1", $('#left-board'), {
+	    UP: 87,
+	    LEFT: 65,
+	    RIGHT: 68,
+	    DOWN: 83,
+	    DROP: 81
+	  });
+	
+	  leftGame.addOpponent(rightGame);
+	  rightGame.addOpponent(leftGame);
+	
+	  leftGame.registerListener(leftGame.opponent.addLines.bind(leftGame.opponent));
+	  rightGame.registerListener(rightGame.opponent.addLines.bind(rightGame.opponent));
+	
+	  leftGame.board.render();
+	  rightGame.board.render();
+	
+	  var computer = false;
+	
+	  var play = function play() {
+	    rightGame.play();
+	    leftGame.play();
+	  };
+	
+	  var playComputer = function playComputer() {
+	    var computerPlayer = new _computer_player2.default(rightGame);
+	    computerPlayer.destroyAllEnemies();
+	  };
+	
+	  (0, _modal2.default)({ title: 'Battle Tetris!',
+	    content: 'Defeat your opponent by clearing lines on your board.',
+	    buttons: [{ text: 'Play Against Human', event: 'playHuman', keyCodes: [13] }, { text: 'Play Against Computer', event: 'playComputer', keyCodes: [] }]
+	  }).on('playComputer', playComputer);
+	
+	  $('.js-button').click(play);
+	});
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _tetris = __webpack_require__(2);
 	
 	var _tetris2 = _interopRequireDefault(_tetris);
 	
-	var _tetrominos = __webpack_require__(8);
+	var _tetrominos = __webpack_require__(4);
 	
 	var Tetrominos = _interopRequireWildcard(_tetrominos);
+	
+	var _modal = __webpack_require__(6);
+	
+	var _modal2 = _interopRequireDefault(_modal);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
@@ -229,38 +292,686 @@
 	  return BattleTetris;
 	}(_tetris2.default);
 	
-	document.addEventListener("DOMContentLoaded", function () {
-	  var rightGame = new BattleTetris("Player 2", $('#right-board'));
-	  var leftGame = new BattleTetris("Player 1", $('#left-board'), {
-	    UP: 87,
-	    LEFT: 65,
-	    RIGHT: 68,
-	    DOWN: 83,
-	    DROP: 81
-	  });
-	
-	  leftGame.addOpponent(rightGame);
-	  rightGame.addOpponent(leftGame);
-	
-	  leftGame.registerListener(leftGame.opponent.addLines.bind(leftGame.opponent));
-	  rightGame.registerListener(rightGame.opponent.addLines.bind(rightGame.opponent));
-	
-	  leftGame.board.render();
-	  rightGame.board.render();
-	
-	  var playGames = function playGames() {
-	    rightGame.play();
-	    leftGame.play();
-	  };
-	
-	  (0, _modal2.default)({ title: 'Battle Tetris!',
-	    content: 'Defeat your opponent by clearing lines on your board.',
-	    buttons: [{ text: 'Play', event: 'play', keyCodes: [13] }]
-	  }).on('play', playGames);
-	});
+	exports.default = BattleTetris;
 
 /***/ },
-/* 1 */
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _board = __webpack_require__(3);
+	
+	var _board2 = _interopRequireDefault(_board);
+	
+	var _tetrominos = __webpack_require__(4);
+	
+	var Tetrominos = _interopRequireWildcard(_tetrominos);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Tetris = function () {
+	  function Tetris($hook, keyBindings) {
+	    _classCallCheck(this, Tetris);
+	
+	    this.$hook = $hook; // root div in index.html
+	    this.board = new _board2.default($hook);
+	    this.dropInterval = 500; //milliseconds
+	    this.clearedRows = 0;
+	    this.resetCurrentTetromino();
+	    this.paused = false;
+	    this.keyBindings = keyBindings || {
+	      UP: 38,
+	      LEFT: 37,
+	      RIGHT: 39,
+	      DOWN: 40,
+	      DROP: 191
+	    };
+	    document.addEventListener('keydown', this.handleKeypress.bind(this), false);
+	  }
+	
+	  _createClass(Tetris, [{
+	    key: 'resetCurrentTetromino',
+	    value: function resetCurrentTetromino() {
+	      this.currentTetromino = {
+	        row: 0,
+	        col: 4,
+	        tetromino: this.nextTetromino || this.randomTetromino(),
+	        rotation: 0
+	      };
+	      this.nextTetromino = this.randomTetromino();
+	      this.board.render();
+	    }
+	  }, {
+	    key: 'randomTetromino',
+	    value: function randomTetromino() {
+	      var tetrominos = [Tetrominos.o, Tetrominos.i, Tetrominos.j, Tetrominos.l, Tetrominos.z, Tetrominos.s, Tetrominos.t];
+	      return tetrominos[Math.floor(Math.random() * tetrominos.length)];
+	    }
+	  }, {
+	    key: 'removeTetromino',
+	    value: function removeTetromino(tetromino) {
+	      this.board.eachBlock(tetromino.row, tetromino.col, tetromino.tetromino, tetromino.rotation, function (x, y) {
+	        this.board.setBlock(x, y, undefined);
+	      }.bind(this));
+	    }
+	  }, {
+	    key: 'removeCurrentTetromino',
+	    value: function removeCurrentTetromino() {
+	      this.removeTetromino(this.currentTetromino);
+	    }
+	  }, {
+	    key: 'placeTetromino',
+	    value: function placeTetromino(tetromino) {
+	      this.board.eachBlock(tetromino.row, tetromino.col, tetromino.tetromino, tetromino.rotation, function (x, y) {
+	        this.board.setBlock(x, y, tetromino.tetromino);
+	      }.bind(this));
+	    }
+	  }, {
+	    key: 'placeCurrentTetromino',
+	    value: function placeCurrentTetromino() {
+	      this.placeTetromino(this.currentTetromino);
+	    }
+	  }, {
+	    key: 'rotateTetromino',
+	    value: function rotateTetromino(tetromino) {
+	      this.removeTetromino(tetromino);
+	      if (!this.board.isOccupied(tetromino.row, tetromino.col, tetromino.tetromino, (tetromino.rotation + 1) % 4)) {
+	        tetromino.rotation = (tetromino.rotation + 1) % 4;
+	      }
+	
+	      this.placeTetromino(tetromino);
+	    }
+	  }, {
+	    key: 'rotateCurrentTetromino',
+	    value: function rotateCurrentTetromino() {
+	      this.rotateTetromino(this.currentTetromino);
+	    }
+	  }, {
+	    key: 'move',
+	    value: function move(dRow, dCol, tetromino) {
+	      if (!tetromino) tetromino = this.currentTetromino;
+	
+	      var newRow = tetromino.row + dRow;
+	      var newCol = tetromino.col + dCol;
+	      this.removeTetromino(tetromino);
+	      var moved = false;
+	
+	      if (!this.board.isOccupied(newRow, newCol, tetromino.tetromino, tetromino.rotation)) {
+	        tetromino.row = newRow;
+	        tetromino.col = newCol;
+	        moved = true;
+	      }
+	
+	      this.placeTetromino(tetromino);
+	      return moved;
+	    }
+	
+	    /**
+	     * Drop current piece as far as possible
+	     */
+	
+	  }, {
+	    key: 'drop',
+	    value: function drop() {
+	      while (this.move(1, 0)) {
+	        continue;
+	      }
+	    }
+	
+	    /**
+	     * Remove completed rows from board, and update dropinterval as necessary
+	     * Return number of rows cleared
+	     */
+	
+	  }, {
+	    key: 'clearRows',
+	    value: function clearRows() {
+	      var removedRows = 0;
+	      for (var row = 0; row < this.board.gridHeight; row++) {
+	        var complete = true;
+	        for (var col = 0; col < this.board.gridWidth; col++) {
+	          if (!this.board.blockAt(row, col) || this.board.blockAt(row, col).string === 'B' // brick piece
+	          ) {
+	              complete = false;
+	              break;
+	            }
+	        }
+	        if (complete) {
+	          this.board.removeRow(row);
+	          removedRows++;
+	          row--;
+	        }
+	      }
+	      return removedRows;
+	    }
+	
+	    /**
+	     * Increase game speed as more lines are cleared
+	     */
+	
+	  }, {
+	    key: 'updateDropInterval',
+	    value: function updateDropInterval() {
+	      if (this.dropInterval > 100) {
+	        this.dropInterval = 500 - 10 * Math.floor(this.clearedRows / 10);
+	      }
+	    }
+	
+	    /**
+	     * Handle user input according to given keyBindings
+	     */
+	
+	  }, {
+	    key: 'handleKeypress',
+	    value: function handleKeypress(e) {
+	      switch (e.keyCode) {
+	        case this.keyBindings.UP:
+	          e.preventDefault();
+	          this.rotateCurrentTetromino();
+	          break;
+	        case this.keyBindings.LEFT:
+	          e.preventDefault();
+	          this.move(0, -1);
+	          break;
+	        case this.keyBindings.RIGHT:
+	          e.preventDefault();
+	          this.move(0, 1);
+	          break;
+	        case this.keyBindings.DOWN:
+	          e.preventDefault();
+	          this.move(1, 0);
+	          break;
+	        case this.keyBindings.DROP:
+	          e.preventDefault();
+	          this.drop();
+	          break;
+	      }
+	      this.board.render();
+	    }
+	
+	    /**
+	     * Main gameplay loop
+	     */
+	
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      setTimeout(function () {
+	        if (!this.move(1, 0)) {
+	          if (this.currentTetromino.row === 0) {
+	            alert('you lose!');
+	            return;
+	          }
+	          this.clearRows();
+	          this.resetCurrentTetromino();
+	        }
+	        this.play();
+	      }.bind(this), this.dropInterval);
+	      this.board.render();
+	    }
+	  }]);
+	
+	  return Tetris;
+	}();
+	
+	exports.default = Tetris;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Board = function () {
+	  function Board($hook, grid) {
+	    _classCallCheck(this, Board);
+	
+	    this.$hook = $hook; // root div in index.html
+	    this.gridHeight = 20;
+	    this.gridWidth = 10;
+	    this.grid = grid ? grid : this.initializeGrid();
+	    // this.grid = this.initializeGrid();
+	  }
+	
+	  /**
+	   * initialize empty game grid
+	   */
+	
+	
+	  _createClass(Board, [{
+	    key: "initializeGrid",
+	    value: function initializeGrid() {
+	      var grid = [];
+	      for (var i = 0; i < this.gridHeight; i++) {
+	        grid.push(new Array(this.gridWidth));
+	      }
+	      return grid;
+	    }
+	
+	    /**
+	     * return the tetromino object at row, col (undefined if no tetromino)
+	     */
+	
+	  }, {
+	    key: "blockAt",
+	    value: function blockAt(row, col) {
+	      return this.grid[row][col];
+	    }
+	
+	    /**
+	     * set block at row, col to have the properties of the tetromino containing the block
+	     */
+	
+	  }, {
+	    key: "setBlock",
+	    value: function setBlock(row, col, tetromino) {
+	      this.grid[row][col] = tetromino;
+	    }
+	
+	    /**
+	     * set block at row, col to undefined
+	     */
+	
+	  }, {
+	    key: "clearBlock",
+	    value: function clearBlock(row, col) {
+	      this.grid[row][col] = undefined;
+	    }
+	
+	    /**
+	     * perform callback function on each position of grid occupied by
+	     * given tetromino located at (row, col) with given rotation.
+	     */
+	
+	  }, {
+	    key: "eachBlock",
+	    value: function eachBlock(row, col, tetromino, rotation, callback) {
+	      var dRow = 0,
+	          dCol = 0;
+	      var tetrominoBlocks = tetromino.rotations[rotation];
+	      for (var currBit = 32768; currBit > 0; currBit >>= 1) {
+	        if (currBit & tetrominoBlocks) {
+	          callback(row + dRow, col + dCol);
+	        }
+	        dCol++;
+	        if (dCol > 3) {
+	          dCol = 0;
+	          dRow++;
+	        }
+	      }
+	    }
+	    //
+	    // /**
+	    //  * Place tetromino at row, col
+	    //  */
+	    // placeTetromino(tetromino, row, col) {
+	    //
+	    // }
+	
+	    /**
+	     *  Return true if any block tetromino of given rotation located at (row, col)
+	     *  will take a space already occupied on the board.
+	     */
+	
+	  }, {
+	    key: "isOccupied",
+	    value: function isOccupied(row, col, tetromino, rotation) {
+	      var occupied = false;
+	
+	      var testOccupation = function (i, j) {
+	        if (i < 0 || j < 0 || i >= this.gridHeight || j >= this.gridWidth || Boolean(this.blockAt(i, j))) {
+	          occupied = true;
+	        }
+	      }.bind(this);
+	
+	      this.eachBlock(row, col, tetromino, rotation, testOccupation);
+	
+	      return occupied;
+	    }
+	
+	    /**
+	     * Delete row from grid, adding empty row to top of grid
+	     */
+	
+	  }, {
+	    key: "removeRow",
+	    value: function removeRow(row) {
+	      this.grid.splice(row, 1);
+	      this.grid.unshift(new Array(this.gridWidth));
+	    }
+	
+	    /**
+	     * Adds empty row at bottom of grid, removing top row to make space
+	     */
+	
+	  }, {
+	    key: "pushRow",
+	    value: function pushRow(rowLocation) {
+	      this.grid.shift();
+	      this.grid.push(new Array(this.gridWidth));
+	    }
+	
+	    /**
+	     * Display this.grid in console for debugging purposes
+	     */
+	
+	  }, {
+	    key: "printGridToConsole",
+	    value: function printGridToConsole() {
+	      for (var row = 0; row < this.gridHeight; row++) {
+	        var rowString = '';
+	        for (var col = 0; col < this.gridWidth; col++) {
+	          rowString += this.blockAt(row, col) ? this.grid[row][col].string : "-";
+	          rowString += " ";
+	        }
+	        console.log(rowString);
+	      }
+	    }
+	
+	    /**
+	     * return a deep copy of the grid in its current state
+	     */
+	
+	  }, {
+	    key: "dupGrid",
+	    value: function dupGrid() {
+	      var dupedGrid = [];
+	      for (var i = 0; i < this.gridHeight; i++) {
+	        var dupedRow = [];
+	        for (var j = 0; j < this.gridWidth; j++) {
+	          dupedRow.push(Object.assign({}, this.grid[i][j]));
+	        }
+	        dupedGrid.push(dupedRow);
+	      }
+	    }
+	
+	    /**
+	     * return a deep copy of the board in its current state
+	     */
+	
+	  }, {
+	    key: "dup",
+	    value: function dup() {
+	      return new Board(null, this.dupGrid());
+	    }
+	
+	    /**
+	     * Update DOM to reflect current board state
+	     */
+	
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      this.$hook.html("");
+	      for (var row = 0; row < this.gridHeight; row++) {
+	        for (var col = 0; col < this.gridWidth; col++) {
+	          var $tile = $("<div id=r-" + row + "-c-" + col + "></div>");
+	          $tile.addClass('tile');
+	          // let color = 'rgb(255, 255, 255)';
+	          if (this.blockAt(row, col)) {
+	            var color = this.blockAt(row, col).color;
+	            $tile.css('background-color', color);
+	            $tile.addClass('block');
+	            $tile.addClass(this.blockAt(row, col).string);
+	          }
+	          this.$hook.append($tile);
+	        }
+	      }
+	    }
+	  }]);
+	
+	  return Board;
+	}();
+	
+	exports.default = Board;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * Tetrominos will be represented as 16-bit binary numbers, with each
+	 * bit representing a position on a 4x4 square grid:
+	 *  0  1  2  3
+	 *  4  5  6  7
+	 *  8  9 10 11
+	 * 12 13 14 15
+	 *
+	 * The o piece, for example, takes up sites 0, 1, 4, and 5, and can
+	 * therefore be represented by the binary number 0b1100 1100 0000 0000.
+	 *
+	 * In this way all of the pieces and all of their rotations can be
+	 * represented with very litte overhead. Additionally, this allows for
+	 * fast bit-level operations when iterating over all blocks in the game
+	 * grid.
+	 */
+	
+	// access n-th rotation of piece with o.rotations[n]
+	var o = exports.o = {
+	  rotations: [52224, 52224, 52224, 52224],
+	  string: 'O',
+	  color: 'rgb(255, 255, 0)'
+	};
+	
+	var i = exports.i = {
+	  rotations: [17476, 3840, 8738, 240],
+	  string: 'I',
+	  color: 'rgb(0, 231, 233)'
+	};
+	
+	var t = exports.t = {
+	  rotations: [3648, 19520, 19968, 17984],
+	  string: 'T',
+	  color: 'rgb(255, 0, 255)'
+	};
+	
+	var l = exports.l = {
+	  rotations: [17504, 3712, 50240, 11776],
+	  string: 'L',
+	  color: 'rgb(255, 128, 0)'
+	};
+	
+	var j = exports.j = {
+	  rotations: [17600, 36352, 25664, 3616],
+	  string: 'J',
+	  color: 'rgb(0, 0, 255)'
+	};
+	
+	var s = exports.s = {
+	  rotations: [27648, 17952, 1728, 35904],
+	  string: 'S',
+	  color: 'rgb(0, 255, 0)'
+	};
+	
+	var z = exports.z = {
+	  rotations: [50688, 9792, 3168, 19584],
+	  string: 'Z',
+	  color: 'rgb(255, 0, 0)'
+	};
+	
+	// for battle tetris - the unclearable brick
+	var brick = exports.brick = {
+	  rotations: [32768, 32768, 32768, 32768],
+	  string: 'B',
+	  color: 'gray'
+	};
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var ComputerPlayer = function () {
+	  function ComputerPlayer(game) {
+	    _classCallCheck(this, ComputerPlayer);
+	
+	    this.game = game;
+	  }
+	
+	  _createClass(ComputerPlayer, [{
+	    key: "destroyAllEnemies",
+	    value: function destroyAllEnemies() {
+	      setTimeout(function () {
+	        if (!this.game.paused) {
+	          this.placePiece();
+	        }
+	        this.destroyAllEnemies();
+	      }.bind(this), 200);
+	    }
+	
+	    /**
+	     * AI Pseudocode:
+	     *
+	     * iterate over possible horizontal positions
+	     *   iterate over possible rotations
+	     *      record lines cleared with move
+	     *      record new height attained with move
+	     * if possible to clear lines
+	     *    make move which clears most lines
+	     * else
+	     *    make move which minimizes new height
+	     *
+	     *
+	     * reach goal: eliminate overhang situations from possible moves
+	     */
+	
+	  }, {
+	    key: "placePiece",
+	    value: function placePiece() {
+	      // let maxLinesCleared = 0;
+	      // let lowestNewHeight = 20;
+	      // let bestLineMove;
+	      // let bestHeightMove;
+	      // for(let dX = -4; dX < 7; dX++) {
+	      //   for(let dRot = 0; dRot < 4; dRot++) {
+	      //     let linesCleared = 0;
+	      //     let newHeight = 0;
+	      //     const dupedBoard = this.game.board.dup();
+	      //
+	      //     // MOVE PIECE
+	      //     let rot = 0;
+	      //     while (rot < dRot) {
+	      //       this.game.rotateCurrentTetromino();
+	      //       rot++;
+	      //     }
+	      //
+	      //     this.game.move(0, )
+	      //
+	      //
+	      //     for (let row = 0; row < dupedBoard.gridHeight; row++) {
+	      //       let complete = true;
+	      //       for (let col = 0; col < dupedBoard.gridWidth; col++) {
+	      //         if (dupedBoard.blockAt(row, col)) newHeight = 0;
+	      //         if (
+	      //           !dupedBoard.blockAt(row, col) ||
+	      //           dupedBoard.blockAt(row,col).string === 'B' // brick piece
+	      //         ) {
+	      //           complete = false;
+	      //           break;
+	      //         }
+	      //       }
+	      //       if (complete) linesCleared++;
+	      //     }
+	      //     if (linesCleared > maxLinesCleared) {
+	      //       maxLinesCleared = linesCleared;
+	      //       bestLineMove = [dX, dRot];
+	      //     }
+	      //     if (newHeight < lowestNewHeight) {
+	      //       lowestNewHeight = newHeight;
+	      //       bestHeightMove = [dX, dRot];
+	      //     }
+	      //   }
+	      // }
+	      //
+	      // if (bestLineMove) { this.game.; }
+	      //
+	      var randRot = this.randBetween(0, 1);
+	      var randMove = this.randBetween(-1, 1);
+	
+	      if (randRot) this.game.rotateCurrentTetromino();
+	      this.game.move(0, randMove);
+	    }
+	
+	    // let removedRows = 0;
+	    // for (let row = 0; row < this.board.gridHeight; row++) {
+	    //   let complete = true;
+	    //   for (let col = 0; col < this.board.gridWidth; col++) {
+	    //     if (
+	    //       !this.board.blockAt(row, col) ||
+	    //       this.board.blockAt(row,col).string === 'B' // brick piece
+	    //     ){
+	    //       complete = false;
+	    //       break;
+	    //     }
+	    //   }
+	    //   if (complete) {
+	    //     this.board.removeRow(row);
+	    //     removedRows++;
+	    //     row--;
+	    //   }
+	    // }
+	    // return removedRows;
+	
+	    /**
+	     * return random integer between min and max, inclusive
+	     */
+	
+	  }, {
+	    key: "randBetween",
+	    value: function randBetween(min, max) {
+	      return Math.floor(Math.random() * (max - min + 1) + min);
+	    }
+	  }]);
+	
+	  return ComputerPlayer;
+	}();
+	
+	var Move = function Move(dX, dRot, linesCleared, newHeight) {
+	  _classCallCheck(this, Move);
+	
+	  this.dX = dX;
+	  this.dRot = dRot;
+	  this.linesCleared = linesCleared;
+	  this.newHeight = newHeight;
+	};
+	
+	exports.default = ComputerPlayer;
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = modal
@@ -306,8 +1017,8 @@
 	 *     .on('confirm', deleteItem)
 	 */
 	
-	var Emitter = __webpack_require__(2).EventEmitter
-	  , template = __webpack_require__(3)
+	var Emitter = __webpack_require__(7).EventEmitter
+	  , template = __webpack_require__(8)
 	
 	  , defaults =
 	    { title: 'Are you sure?'
@@ -475,7 +1186,7 @@
 
 
 /***/ },
-/* 2 */
+/* 7 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -783,10 +1494,10 @@
 
 
 /***/ },
-/* 3 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var jade = __webpack_require__(4);module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+	var jade = __webpack_require__(9);module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 	attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 	var buf = [];
 	with (locals || {}) {
@@ -847,7 +1558,7 @@
 	}
 
 /***/ },
-/* 4 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1067,7 +1778,7 @@
 	    throw err;
 	  }
 	  try {
-	    str = str || __webpack_require__(5).readFileSync(filename, 'utf8')
+	    str = str || __webpack_require__(10).readFileSync(filename, 'utf8')
 	  } catch (ex) {
 	    rethrow(err, null, lineno)
 	  }
@@ -1099,507 +1810,10 @@
 
 
 /***/ },
-/* 5 */
+/* 10 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _board = __webpack_require__(7);
-	
-	var _board2 = _interopRequireDefault(_board);
-	
-	var _tetrominos = __webpack_require__(8);
-	
-	var Tetrominos = _interopRequireWildcard(_tetrominos);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Tetris = function () {
-	  function Tetris($hook, keyBindings) {
-	    _classCallCheck(this, Tetris);
-	
-	    this.$hook = $hook; // root div in index.html
-	    this.board = new _board2.default($hook);
-	    this.dropInterval = 500; //milliseconds
-	    this.clearedRows = 0;
-	    this.resetCurrentTetromino();
-	    this.paused = false;
-	    this.keyBindings = keyBindings || {
-	      UP: 38,
-	      LEFT: 37,
-	      RIGHT: 39,
-	      DOWN: 40,
-	      DROP: 191
-	    };
-	    document.addEventListener('keydown', this.handleKeypress.bind(this), false);
-	  }
-	
-	  _createClass(Tetris, [{
-	    key: 'resetCurrentTetromino',
-	    value: function resetCurrentTetromino() {
-	      this.currentTetromino = {
-	        row: 0,
-	        col: 4,
-	        tetromino: this.nextTetromino || this.randomTetromino(),
-	        rotation: 0
-	      };
-	      this.nextTetromino = this.randomTetromino();
-	    }
-	  }, {
-	    key: 'randomTetromino',
-	    value: function randomTetromino() {
-	      var tetrominos = [Tetrominos.o, Tetrominos.i, Tetrominos.j, Tetrominos.l, Tetrominos.z, Tetrominos.s, Tetrominos.t];
-	      return tetrominos[Math.floor(Math.random() * tetrominos.length)];
-	    }
-	  }, {
-	    key: 'removeTetromino',
-	    value: function removeTetromino(tetromino) {
-	      this.board.eachBlock(tetromino.row, tetromino.col, tetromino.tetromino, tetromino.rotation, function (x, y) {
-	        this.board.setBlock(x, y, undefined);
-	      }.bind(this));
-	    }
-	  }, {
-	    key: 'removeCurrentTetromino',
-	    value: function removeCurrentTetromino() {
-	      this.removeTetromino(this.currentTetromino);
-	    }
-	  }, {
-	    key: 'placeTetromino',
-	    value: function placeTetromino(tetromino) {
-	      this.board.eachBlock(tetromino.row, tetromino.col, tetromino.tetromino, tetromino.rotation, function (x, y) {
-	        this.board.setBlock(x, y, tetromino.tetromino);
-	      }.bind(this));
-	    }
-	  }, {
-	    key: 'placeCurrentTetromino',
-	    value: function placeCurrentTetromino() {
-	      this.placeTetromino(this.currentTetromino);
-	    }
-	  }, {
-	    key: 'rotateTetromino',
-	    value: function rotateTetromino(tetromino) {
-	      this.removeTetromino(tetromino);
-	      if (!this.board.isOccupied(tetromino.row, tetromino.col, tetromino.tetromino, (tetromino.rotation + 1) % 4)) {
-	        tetromino.rotation = (tetromino.rotation + 1) % 4;
-	      }
-	
-	      this.placeTetromino(tetromino);
-	    }
-	  }, {
-	    key: 'rotateCurrentTetromino',
-	    value: function rotateCurrentTetromino() {
-	      this.rotateTetromino(this.currentTetromino);
-	    }
-	  }, {
-	    key: 'move',
-	    value: function move(dRow, dCol, tetromino) {
-	      if (!tetromino) tetromino = this.currentTetromino;
-	
-	      var newRow = tetromino.row + dRow;
-	      var newCol = tetromino.col + dCol;
-	      this.removeTetromino(tetromino);
-	      var moved = false;
-	
-	      if (!this.board.isOccupied(newRow, newCol, tetromino.tetromino, tetromino.rotation)) {
-	        tetromino.row = newRow;
-	        tetromino.col = newCol;
-	        moved = true;
-	      }
-	
-	      this.placeTetromino(tetromino);
-	      return moved;
-	    }
-	
-	    /**
-	     * Drop current piece as far as possible
-	     */
-	
-	  }, {
-	    key: 'drop',
-	    value: function drop() {
-	      while (this.move(1, 0)) {
-	        continue;
-	      }
-	    }
-	
-	    /**
-	     * Remove completed rows from board, and update dropinterval as necessary
-	     * Return number of rows cleared
-	     */
-	
-	  }, {
-	    key: 'clearRows',
-	    value: function clearRows() {
-	      var removedRows = 0;
-	      for (var row = 0; row < this.board.gridHeight; row++) {
-	        var complete = true;
-	        for (var col = 0; col < this.board.gridWidth; col++) {
-	          if (!this.board.blockAt(row, col) || this.board.blockAt(row, col).string === 'B' // brick piece
-	          ) {
-	              complete = false;
-	              break;
-	            }
-	        }
-	        if (complete) {
-	          this.board.removeRow(row);
-	          removedRows++;
-	          row--;
-	        }
-	      }
-	      return removedRows;
-	    }
-	
-	    /**
-	     * Increase game speed as more lines are cleared
-	     */
-	
-	  }, {
-	    key: 'updateDropInterval',
-	    value: function updateDropInterval() {
-	      if (this.dropInterval > 100) {
-	        this.dropInterval = 500 - 10 * Math.floor(this.clearedRows / 10);
-	      }
-	    }
-	
-	    /**
-	     * Handle user input according to given keyBindings
-	     */
-	
-	  }, {
-	    key: 'handleKeypress',
-	    value: function handleKeypress(e) {
-	      switch (e.keyCode) {
-	        case this.keyBindings.UP:
-	          e.preventDefault();
-	          this.rotateCurrentTetromino();
-	          break;
-	        case this.keyBindings.LEFT:
-	          e.preventDefault();
-	          this.move(0, -1);
-	          break;
-	        case this.keyBindings.RIGHT:
-	          e.preventDefault();
-	          this.move(0, 1);
-	          break;
-	        case this.keyBindings.DOWN:
-	          e.preventDefault();
-	          this.move(1, 0);
-	          break;
-	        case this.keyBindings.DROP:
-	          e.preventDefault();
-	          this.drop();
-	          break;
-	      }
-	      this.board.render();
-	    }
-	
-	    /**
-	     * Main gameplay loop
-	     */
-	
-	  }, {
-	    key: 'play',
-	    value: function play() {
-	      setTimeout(function () {
-	        if (!this.move(1, 0)) {
-	          if (this.currentTetromino.row === 0) {
-	            alert('you lose!');
-	            return;
-	          }
-	          this.clearRows();
-	          this.resetCurrentTetromino();
-	        }
-	        this.play();
-	      }.bind(this), this.dropInterval);
-	      this.board.render();
-	    }
-	  }]);
-	
-	  return Tetris;
-	}();
-	
-	exports.default = Tetris;
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Board = function () {
-	  function Board($hook) {
-	    _classCallCheck(this, Board);
-	
-	    this.$hook = $hook; // root div in index.html
-	    this.gridHeight = 20;
-	    this.gridWidth = 10;
-	    this.grid = this.initializeGrid();
-	  }
-	
-	  /**
-	   * initialize empty game grid
-	   */
-	
-	
-	  _createClass(Board, [{
-	    key: "initializeGrid",
-	    value: function initializeGrid() {
-	      var grid = [];
-	      for (var i = 0; i < this.gridHeight; i++) {
-	        grid.push(new Array(this.gridWidth));
-	      }
-	      return grid;
-	    }
-	
-	    /**
-	     * return the tetromino object at row, col (undefined if no tetromino)
-	     */
-	
-	  }, {
-	    key: "blockAt",
-	    value: function blockAt(row, col) {
-	      return this.grid[row][col];
-	    }
-	
-	    /**
-	     * set block at row, col to have the properties of the tetromino containing the block
-	     */
-	
-	  }, {
-	    key: "setBlock",
-	    value: function setBlock(row, col, tetromino) {
-	      this.grid[row][col] = tetromino;
-	    }
-	
-	    /**
-	     * set block at row, col to undefined
-	     */
-	
-	  }, {
-	    key: "clearBlock",
-	    value: function clearBlock(row, col) {
-	      this.grid[row][col] = undefined;
-	    }
-	
-	    /**
-	     * perform callback function on each position of grid occupied by
-	     * given tetromino located at (row, col) with given rotation.
-	     */
-	
-	  }, {
-	    key: "eachBlock",
-	    value: function eachBlock(row, col, tetromino, rotation, callback) {
-	      var dRow = 0,
-	          dCol = 0;
-	      var tetrominoBlocks = tetromino.rotations[rotation];
-	      for (var currBit = 32768; currBit > 0; currBit >>= 1) {
-	        if (currBit & tetrominoBlocks) {
-	          callback(row + dRow, col + dCol);
-	        }
-	        dCol++;
-	        if (dCol > 3) {
-	          dCol = 0;
-	          dRow++;
-	        }
-	      }
-	    }
-	    //
-	    // /**
-	    //  * Place tetromino at row, col
-	    //  */
-	    // placeTetromino(tetromino, row, col) {
-	    //
-	    // }
-	
-	    /**
-	     *  Return true if any block tetromino of given rotation located at (row, col)
-	     *  will take a space already occupied on the board.
-	     */
-	
-	  }, {
-	    key: "isOccupied",
-	    value: function isOccupied(row, col, tetromino, rotation) {
-	      var occupied = false;
-	
-	      var testOccupation = function (i, j) {
-	        if (i < 0 || j < 0 || i >= this.gridHeight || j >= this.gridWidth || Boolean(this.blockAt(i, j))) {
-	          occupied = true;
-	        }
-	      }.bind(this);
-	
-	      this.eachBlock(row, col, tetromino, rotation, testOccupation);
-	
-	      return occupied;
-	    }
-	
-	    /**
-	     * Delete row from grid, adding empty row to top of grid
-	     */
-	
-	  }, {
-	    key: "removeRow",
-	    value: function removeRow(row) {
-	      this.grid.splice(row, 1);
-	      this.grid.unshift(new Array(this.gridWidth));
-	    }
-	
-	    /**
-	     * Adds enpty row at bottom of grid, removing top row to make space
-	     */
-	
-	  }, {
-	    key: "pushRow",
-	    value: function pushRow(rowLocation) {
-	      this.grid.shift();
-	      this.grid.push(new Array(this.gridWidth));
-	    }
-	
-	    /**
-	     * Display this.grid in console for debugging purposes
-	     */
-	
-	  }, {
-	    key: "printGridToConsole",
-	    value: function printGridToConsole() {
-	      for (var row = 0; row < this.gridHeight; row++) {
-	        var rowString = '';
-	        for (var col = 0; col < this.gridWidth; col++) {
-	          rowString += this.blockAt(row, col) ? this.grid[row][col].string : "-";
-	          rowString += " ";
-	        }
-	        console.log(rowString);
-	      }
-	    }
-	
-	    /**
-	     * Update DOM to reflect current board state
-	     */
-	
-	  }, {
-	    key: "render",
-	    value: function render() {
-	      this.$hook.html("");
-	      for (var row = 0; row < this.gridHeight; row++) {
-	        for (var col = 0; col < this.gridWidth; col++) {
-	          var $tile = $("<div id=r-" + row + "-c-" + col + "></div>");
-	          $tile.addClass('tile');
-	          // let color = 'rgb(255, 255, 255)';
-	          if (this.blockAt(row, col)) {
-	            var color = this.blockAt(row, col).color;
-	            $tile.css('background-color', color);
-	            $tile.addClass('block');
-	            $tile.addClass(this.blockAt(row, col).string);
-	          }
-	          this.$hook.append($tile);
-	        }
-	      }
-	    }
-	  }]);
-	
-	  return Board;
-	}();
-	
-	exports.default = Board;
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	/**
-	 * Tetrominos will be represented as 16-bit binary numbers, with each
-	 * bit representing a position on a 4x4 square grid:
-	 *  0  1  2  3
-	 *  4  5  6  7
-	 *  8  9 10 11
-	 * 12 13 14 15
-	 *
-	 * The o piece, for example, takes up sites 0, 1, 4, and 5, and can
-	 * therefore be represented by the binary number 0b1100 1100 0000 0000.
-	 *
-	 * In this way all of the pieces and all of their rotations can be
-	 * represented with very litte overhead. Additionally, this allows for
-	 * fast bit-level operations when iterating over all blocks in the game
-	 * grid.
-	 */
-	
-	// access n-th rotation of piece with o.rotations[n]
-	var o = exports.o = {
-	  rotations: [52224, 52224, 52224, 52224],
-	  string: 'O',
-	  color: 'rgb(255, 255, 0)'
-	};
-	
-	var i = exports.i = {
-	  rotations: [17476, 3840, 8738, 240],
-	  string: 'I',
-	  color: 'rgb(0, 231, 233)'
-	};
-	
-	var t = exports.t = {
-	  rotations: [3648, 19520, 19968, 17984],
-	  string: 'T',
-	  color: 'rgb(255, 0, 255)'
-	};
-	
-	var l = exports.l = {
-	  rotations: [17504, 3712, 50240, 11776],
-	  string: 'L',
-	  color: 'rgb(255, 128, 0)'
-	};
-	
-	var j = exports.j = {
-	  rotations: [17600, 36352, 25664, 3616],
-	  string: 'J',
-	  color: 'rgb(0, 0, 255)'
-	};
-	
-	var s = exports.s = {
-	  rotations: [27648, 17952, 1728, 35904],
-	  string: 'S',
-	  color: 'rgb(0, 255, 0)'
-	};
-	
-	var z = exports.z = {
-	  rotations: [50688, 9792, 3168, 19584],
-	  string: 'Z',
-	  color: 'rgb(255, 0, 0)'
-	};
-	
-	// for battle tetris - the unclearable brick
-	var brick = exports.brick = {
-	  rotations: [32768, 32768, 32768, 32768],
-	  string: 'B',
-	  color: 'gray'
-	};
 
 /***/ }
 /******/ ]);
