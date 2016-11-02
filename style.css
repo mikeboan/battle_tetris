@@ -163,3 +163,8 @@ td:nth-child(even) {
      -1px 1px 0 #000,
       1px 1px 0 #000;
 }
+
+button, a {
+  cursor: pointer;
+  cursor: hand;
+}
