@@ -2,6 +2,8 @@
 The classic tetris with a twist! Defeat your friends or a computer by clearing lines on your board
 and sending them to your opponent!
 
+![Battle Tetris in action](./lib/images/action_shot.gif)
+
 ## Gameplay
 The game consists of two players, one human and one human or computer.
 Each player manipulates falling tetromino pieces to complete lines on their board.
