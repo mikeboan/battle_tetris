@@ -18,9 +18,13 @@ as some vanilla JS DOM manipulation.
 Tetromino movement and placement logic is handled by bitwise-operations on
 tetromino pieces, which are modeled as 16-bit binary numbers, with each
 bit representing a position on a 4x4 square grid:
+
  0  1  2  3
+
  4  5  6  7
+
  8  9 10 11
+
 12 13 14 15
 
 The o piece, for example, takes up sites 0, 1, 4, and 5, and can
