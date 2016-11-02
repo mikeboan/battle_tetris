@@ -19,11 +19,11 @@ Tetromino movement and placement logic is handled by bitwise-operations on
 tetromino pieces, which are modeled as 16-bit binary numbers, with each
 bit representing a position on a 4x4 square grid:
 
- 0  1  2  3
+00 01 02 03
 
- 4  5  6  7
+04 05 06 07
 
- 8  9 10 11
+08 09 10 11
 
 12 13 14 15
 
