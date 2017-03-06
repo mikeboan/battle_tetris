@@ -34,7 +34,6 @@ header > h1 {
   left: calc(50% - 45px);
   z-index: 10;
 
-  -webkit-text-stroke: 1px black;
   color: white;
   text-shadow:
       3px 3px 0 #000,
@@ -49,7 +48,6 @@ section {
 }
 
 section h2 {
-  -webkit-text-stroke: 1px black;
   color: white;
   text-shadow:
       3px 3px 0 #000,
@@ -154,7 +152,6 @@ td:nth-child(even) {
 }
 
 .modal-content > h1 {
-  -webkit-text-stroke: 1px black;
   color: white;
   text-shadow:
       3px 3px 0 #000,
