@@ -165,3 +165,38 @@ button, a {
   cursor: pointer;
   cursor: hand;
 }
+
+.modal-controls {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-controls button {
+  /* width: 140px;
+  height: 45px; */
+  padding: 5px;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: white;
+  background-color: black;;
+  border: 1px solid white;
+  border-radius: 3px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  }
+
+.modal-controls button:hover {
+  background-color: #05bdad;
+  box-shadow: 0px 15px 20px rgba(21, 187, 162, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.modal-controls button:first-of-type {
+  margin-right: 5px;
+}
