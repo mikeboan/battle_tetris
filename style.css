@@ -191,8 +191,8 @@ button, a {
   }
 
 .modal-controls button:hover {
-  background-color: #05bdad;
-  box-shadow: 0px 15px 20px rgba(21, 187, 162, 0.4);
+  background-color: #0072ba;
+  box-shadow: 0px 15px 20px rgba(0, 114, 186, 0.4);
   color: #fff;
   transform: translateY(-7px);
 }
